@@ -1,0 +1,233 @@
+---
+title: "Vietnam Veteran Facts from the 2016 American Community Survey"
+output: 
+  html_document:
+    css: style.css
+    theme: flatly
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(survey)
+
+
+#Data - Vietnam Era  Veterans Survey Design Object
+viet11_design <- readRDS("Data_per11_viet_design.Rds")
+viet16_design <- readRDS("Data_per16_viet_design.Rds")
+
+
+#total vietnam veterans (VPS ==  6 or 7 or 8)
+viet.vets.2011 <- sum(svytable(~VPS, viet11_design))
+viet.vets.2016 <- sum(svytable(~VPS, viet16_design))
+#change in Viet VET population from 2011 to 2016
+viet.vets.diff <- (viet.vets.2016 - viet.vets.2011)/viet.vets.2011
+viet.vets.diff <- round(viet.vets.diff *100, digits = 1)
+
+#2016 viet vets by SEX
+sex <- svytotal(~factor(SEX), viet16_design)
+
+
+```
+
+## About
+
+This page lists several estimates about Vietnam Veterans from the [1- year 2016 American Community Survey (ACS) Public Use Microdata Sample (PUMS) Person file.](https://factfinder.census.gov/faces/nav/jsf/pages/searchresults.xhtml?refresh=t#) The ACS person file covers 50 states, District of Columbia and Puerto Rico. My intent is to build out the page by adding more ACS variables gradually. [All the code and data are avaialble on GitHub.](https://github.com/mihiriyer/vietvet-per-facts-2016)
+
+## Population 
+
+**Vietnam Veterans:** `r format(sum(viet.vets.2016), big.mark = ",")` (Male `r format(sex[1], big.mark = ",")` / Female `r format(sex[2], big.mark = ",")` )  
+
+## Population Change (since 2011)
+
+`r viet.vets.diff`% (`r format(viet.vets.2016 - viet.vets.2011, big.mark = ",")`)
+
+## Population by State 
+
+![](viet_vet_statebin.svg)
+
+
+## Race (Non-Hispanic)
+
+```{r race, echo=FALSE}
+#create new race variable RaceNH to serve as a rolled-up version of RAC1P
+viet16_design <- update(viet16_design, RaceNH = character(nrow(viet16_design)))
+#roll-up RaceNH levels
+viet16_design <- update(viet16_design,
+                        RaceNH = ifelse(RAC1P %in% c(3:5), "AIAN", 
+                                        ifelse(RAC1P %in% c(6:7), "Asian/NHOPI",
+                                               ifelse(RAC1P == 2, "Black", 
+                                                      ifelse(RAC1P == 1, "White", "Other")))
+                        )
+                        
+)
+
+racenh <- svymean(~factor(RaceNH), subset(viet16_design, HISP == 1)) * 100
+racenh <- round(racenh, digits = 1)
+
+```
+
+
+American Indian/Alaska Native `r racenh[1]`%, Asian/NHOPI `r racenh[2]`%, Black `r racenh[3]`%, Other `r racenh[4]`%, White `r racenh[5]`%
+
+## Marital Status 
+
+```{r mar, echo=FALSE}
+mar<- svymean(~factor(MAR), viet16_design, na.rm = TRUE) * 100
+mar <- round(mar, digits = 1)
+
+```
+
+Divorced `r mar[3]`%, Married `r mar[1]`%, Never Married `r mar[5]`%, Separated `r mar[4]`%, Widowed `r mar[2]`% 
+
+## Age Group
+
+```{r age_struc, echo = FALSE}
+#Create categorical version of AGEP
+age.range <- seq(55, 105, 10)
+viet16_design <- update(viet16_design, AGEP.Cat = cut(AGEP, age.range, right = FALSE))
+agecat <- svymean(~AGEP.Cat, viet16_design, na.rm = TRUE) * 100
+agecat <- round(agecat, digits = 2)
+
+#male total by age group
+agecat.m <- svytotal(~factor(AGEP.Cat), subset(viet16_design, SEX == 1))
+
+#FEMALE total by age group
+agecat.f <- svytotal(~factor(AGEP.Cat), subset(viet16_design, SEX == 2))
+
+```
+
+**55 - 64 years:**  `r agecat[1]`%  (Male `r format(agecat.m[1], big.mark = ",")` / Female `r format(agecat.f[1], big.mark = ",")`)  
+**65 - 74 years:**  `r agecat[2]`%  (Male `r format(agecat.m[2], big.mark = ",")` / Female `r format(agecat.f[2], big.mark = ",")`)  
+**75 - 84 years:**  `r agecat[3]`%  (Male `r format(agecat.m[3], big.mark = ",")` / Female `r format(agecat.f[3], big.mark = ",")`)  
+**85 - 94 years:**  `r agecat[4]`%  (Male `r format(agecat.m[4], big.mark = ",")` / Female `r format(agecat.f[4], big.mark = ",")`)  
+**95 - 104 years:** `r agecat[5]`%  (Male `r format(agecat.m[5], big.mark = ",")` / Female `r format(agecat.f[5], big.mark = ",")`)  
+
+## Median Age
+
+```{r age_median, echo = FALSE}
+#Median Age of Vietnam Veterans
+age.median <- svyquantile(~AGEP, viet16_design, quantiles = c(0.5))
+age.median.m <- svyquantile(~AGEP, subset(viet16_design, SEX == 1), quantiles = c(0.5))
+age.median.f <- svyquantile(~AGEP, subset(viet16_design, SEX == 2), quantiles = c(0.5))
+
+```
+
+**Total:** `r age.median` years  (Male `r age.median.m` / Female `r age.median.f`)
+
+## Educational Attainment
+
+```{r edu, echo = FALSE}
+#convert SCHL variable to factor and condense levels
+viet16_design$variables$SCHL <- factor(viet16_design$variables$SCHL)
+levels(viet16_design$variables$SCHL) <-  list(LHS = c(1:15), HS = c(16:17), SC = c(18:20), BAC = 21, ADV = c(22:24))
+
+schl <- svymean(~SCHL, viet16_design, na.rm = TRUE) * 100
+schl <- round(schl, digits = 1)
+
+```
+
+Less than High School `r schl[1]`%, High School Graduate `r schl[2]`%, Some College `r schl[3]`%, Bachelor's Degree `r schl[4]`%, Advanced Degree `r schl[4]`%
+
+## Employment Status
+
+```{r esr, echo = FALSE}
+
+esr <- svymean(~factor(ESR), viet16_design, na.rm = TRUE) * 100
+esr <- round(esr, digits = 1)
+
+```
+
+Not in Labor Force `r esr[4]`%,  Unemployed `r esr[3]`%, At Work (Civilian Employed) `r esr[1]`%, With Job NOT at Work (Civilian Employed) `r esr[2]`%  
+
+## Class of Worker
+
+```{r cow, echo = FALSE}
+
+viet16_design$variables$COW <- factor(viet16_design$variables$COW)
+levels(viet16_design$variables$COW) <- list(Pvt = c(1,2,8), Govt = c(3:5), SelfEmp = c(6,7), Unemp = 9)
+cow <- svymean(~COW, subset(viet16_design, COW != "Unemp"), na.rm = TRUE) * 100
+cow <- round(cow, digits = 1)
+
+```
+
+Private sector `r cow[1]`%, Public sector `r cow[2]`%, Self-employed `r cow[3]`%  
+
+## Personal Income
+
+```{r pincp, echo = FALSE}
+#vector of income ranges used to convert numeric income variable into categorical variable.
+income.range <- c(seq(0, 100000, 20000), Inf)
+
+viet16_design <- update(viet16_design, PINCP.Cat = cut(PINCP, income.range, right = FALSE))
+pincp <- svymean(~PINCP.Cat, viet16_design, na.rm = TRUE) * 100
+pincp <- round(pincp, digits = 1)
+
+
+```
+
+**$0 - $19,999:** `r pincp[1]`%  
+**$20,000 - $39,999:** `r pincp[2]`%  
+**$40,000 - $59,999:** `r pincp[3]`%  
+**$60,000 - $79,999:** `r pincp[4]`%  
+**$80,000 - $99,999:** `r pincp[5]`%  
+**$100,000+ :** `r pincp[6]`%  
+
+## Disability Status 
+```{r drat_dratx, echo = FALSE}
+#disability status
+dis <- svymean(~factor(DIS), viet16_design, na.rm = TRUE) * 100
+dis <- round(dis, digits = 1)
+#scd status
+dratx <- svymean(~factor(DRATX), viet16_design, na.rm = TRUE) * 100
+dratx <- round(dratx, digits = 1)
+#scd rating
+drat <- svymean(~factor(DRAT), viet16_design, na.rm = TRUE) * 100
+drat <- round(drat, digits = 1)
+
+```
+
+With a disability `r dis[1]`%, Without a disability `r dis[2]`%  
+
+## Service Connected Disability (SCD) Rating 
+
+Has SCD rating `r dratx[1]`%, Does not have SCD rating `r dratx[2]`%  
+
+**0%:** `r drat[1]`%  
+**10 - 20%:** `r drat[2]`%  
+**30 - 40%:** `r drat[3]`%  
+**50 - 60%:** `r drat[4]`%  
+**70 < %:** `r drat[5]`%  
+**Not Reported:** `r drat[6]`%  
+
+
+## Health Insurance Coverage
+
+```{r pubcov, echo=FALSE}
+pubcov <- svymean(~factor(PUBCOV), viet16_design, na.rm = TRUE) * 100
+pubcov <- round(pubcov, digits = 1)
+
+```
+**Public Health Insurance Coverage (Medicare, Medicaid and VA)**  
+Covered `r pubcov[1]`%, Not Covered `r pubcov[2]`%  
+
+```{r privcov, echo=FALSE}
+privcov <- svymean(~factor(PRIVCOV), viet16_design, na.rm = TRUE) * 100
+privcov <- round(privcov, digits = 1)
+
+```
+**Private Health Insurance Coverage (Employer, Direct-Purchase and TRICARE/CHAMPUS)**  
+Covered `r privcov[1]`%, Not Covered `r privcov[2]`%  
+
+```{r hins6-vahealth, echo = FALSE}
+hins6 <- svymean(~factor(HINS6), viet16_design, na.rm = TRUE) * 100
+hins6 <- round(hins6, digits = 1)
+
+```
+**VA Healthcare (Used or Enrolled)**  
+Covered `r hins6[1]`%, Not Covered `r hins6[2]`%
+
+
