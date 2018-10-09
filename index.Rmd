@@ -1,5 +1,5 @@
 ---
-title: "Vietnam Veteran Facts from the 2016 American Community Survey"
+title: "Vietnam Veteran Statistics from the 2016 American Community Survey"
 output: 
   html_document:
     css: style.css
@@ -35,7 +35,8 @@ sex <- svytotal(~factor(SEX), viet16_design)
 
 ## About
 
-This page lists several estimates about Vietnam Veterans from the [1- year 2016 American Community Survey (ACS) Public Use Microdata Sample (PUMS) Person file.](https://factfinder.census.gov/faces/nav/jsf/pages/searchresults.xhtml?refresh=t#) The ACS person file covers 50 states, District of Columbia and Puerto Rico. My intent is to build out the page by adding more ACS variables gradually. [All the code and data are avaialble on GitHub.](https://github.com/mihiriyer/vietvet-acsstats-2016)
+This page lists several statistics on Vietnam Veterans from the [1- year 2016 American Community Survey (ACS) Public Use Microdata Sample (PUMS) Person file.](https://www.census.gov/programs-surveys/acs/data/pums.html) The ACS person file covers 50 states, District of Columbia and Puerto Rico. My intent is to build out the page by adding more ACS variables gradually. [All the code and data are avaialble on GitHub.](https://github.com/mihiriyer/vietvet-acsstats-2016) You may find it useful to check out the [ACS PUMS technical documentation from US Census Bureau's website.](https://www.census.gov/programs-surveys/acs/technical-documentation/code-lists.2016.html)
+
 
 ## Population 
 

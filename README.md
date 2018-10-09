@@ -1,6 +1,6 @@
 ### Introduction
 
-The code in this repository creates a basic html page that lists several estimates about Vietnam Veterans. My inspiration for the page comes from the [CIA World Factbook](https://www.cia.gov/library/publications/the-world-factbook/) which provides a simple and efficient way to lookup basic facts about a country. This page attempts to do the same for the Vietnam Veteran cohort. The data source is the 2016 American Community Survey (ACS) Public Use Microdata Sample (PUMS) Person file. The ACS person file covers 50 states, District of Columbia and Puerto Rico. My intent is to build out the page by adding more ACS variables gradually.
+The code in this repository creates a basic html page that lists several statistics about Vietnam Veterans. My inspiration for the page comes from the [CIA World Factbook](https://www.cia.gov/library/publications/the-world-factbook/) which provides a simple and efficient way to lookup basic facts about a country. This page attempts to do the same for the Vietnam Veteran cohort. The data source is the [2016 American Community Survey (ACS) Public Use Microdata Sample (PUMS) Person file.](https://www.census.gov/programs-surveys/acs/data/pums.html) The ACS person file covers 50 states, District of Columbia and Puerto Rico. My intent is to build out the page by adding more ACS variables gradually.
 
 ### Required packages
 
