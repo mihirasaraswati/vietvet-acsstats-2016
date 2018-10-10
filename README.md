@@ -6,7 +6,7 @@ The code in this repository creates a basic html page that lists several statist
 
 The following R packages are required: survey, statebins and ggplot2. 
 
-### Step 1 - Setup the R project and from the GitHub repository
+### Step 1 - Setup the R project from the GitHub repository
 
 The first step in reproducing this html fact sheet is to create a R project from the GitHub repository. You will need to have R, R Studio, and Git installed on your machine. The tutorials from the [RStudio Support Site](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN) and the [Data Surg blog](http://www.datasurg.net/2015/07/13/rstudio-and-github/) will help you get setup with these tools. 
 
