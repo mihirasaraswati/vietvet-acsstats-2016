@@ -1,4 +1,6 @@
-start_time <- Sys.time()
+# measure run time if you wish
+# start_time <- Sys.time()
+
 library(survey)
 
 # 2016 PUMS Files ---------------------------------------------------------
@@ -23,11 +25,15 @@ download.file(url = pr2016, destfile = temp)
 ppr <- read.csv(unzip(zipfile = temp, files = "ss16ppr.csv",  exdir = "./Raw_Data"))
 
 #combine all 2016 files
-usabpr16 <- rbind(usa, usb, ppr)
+pums <- rbind(usa, usb, ppr)
 
-usabpr16 <- svydesign(id = ~1,
-                    weights = usabpr16$PWGTP,
-                    data = usabpr16,
+#Alternate PUMS data read method 
+# If you already have a PUMS csv file. You can put it in the Raw_Data folder you can uncomment and add the file name in line the line below
+# pums <- read.csv(file = "Raw_Data/ADD NAME OF YOUR PUMS CSV FILE HERE")
+
+pums <- svydesign(id = ~1,
+                    weights = pums$PWGTP,
+                    data = pums,
                     repweights = "pwgtp[0-9]+",
                     type = "JKn",
                     scale = 4/80,
@@ -36,16 +42,18 @@ usabpr16 <- svydesign(id = ~1,
 )
 
 #subset for Vietnam War Veterans (MIL and VPS variables)
-usabpr_viet <- subset(usabpr16, MIL %in% c(2:3) & VPS %in% c(6:8))
+pums_viet <- subset(pums, MIL %in% c(2:3) & VPS %in% c(6:8))
 #save svy obj as RDS file
-saveRDS(usabpr_viet, "Data_per16_viet_design-test.Rds")
+saveRDS(pums_viet, "Data_per16_viet_design-test.Rds")
 #Clear the workspace
-rm(usabpr_viet, usabpr16, usa, usb, ppr, us2016, pr2016)
+rm(pums_viet, pums, usa, usb, ppr, us2016, pr2016)
 
-end_time <- Sys.time()
+
 
 
 # 2011 PUMS Files ---------------------------------------------------------
+# The 2011 data are used to make one comparison - the population change of Vietnam Veterans using the VPS variable. This is a bit of work for one stat...
+
 #URLs for 2011 PUMS files
 us2011 <- "http://www2.census.gov/acs2011_1yr/pums/csv_pus.zip"
 pr2011 <- "http://www2.census.gov/acs2011_1yr/pums/csv_ppr.zip"
@@ -66,12 +74,16 @@ ppr <- read.csv(unzip(zipfile = temp, files = "ss11ppr.csv",  exdir = "./Raw_Dat
 ## Consolidate, create survey object, subset for Vietnam Veterans and save svy object as a Rds file.
 
 #consolidate files
-usabpr11 <- rbind(usa, usb, ppr)
+pums <- rbind(usa, usb, ppr)
+
+#Alternate PUMS data read method 
+# If you already have a PUMS csv file. You can put it in the Raw_Data folder you can uncomment and add the file name in line the line below
+# pums <- read.csv(file = "Raw_Data/ADD NAME OF YOUR PUMS CSV FILE HERE")
 
 #Create survey object
-usabpr11 <- svydesign(id = ~1,
-                    weights = usabpr11$PWGTP,
-                    data = usabpr11,
+pums <- svydesign(id = ~1,
+                    weights = pums$PWGTP,
+                    data = pums,
                     repweights = "pwgtp[0-9]+",
                     type = "JKn",
                     scale = 4/80,
@@ -80,10 +92,12 @@ usabpr11 <- svydesign(id = ~1,
 )
 
 #subset for Vietnam War Veterans (MIL and VPS variables)
-usabpr_viet <- subset(usabpr11, MIL %in% c(2:3) & VPS %in% c(6:8))
+pums_viet <- subset(pums, MIL %in% c(2:3) & VPS %in% c(6:8))
 #save svy obj as RDS file
-saveRDS(usabpr_viet, "Data_per11_viet_design-test.Rds")
+saveRDS(pums_viet, "Data_per11_viet_design
+        .Rds")
 #Clear the workspace
-rm(usabpr_viet, usabpr11, usa, usb, ppr, us2011, pr2011)
+rm(pums_viet, pums, usa, usb, ppr, us2011, pr2011)
 
-
+# measure run time if you wish
+# end_time <- Sys.time() 
