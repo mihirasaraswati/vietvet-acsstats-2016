@@ -195,7 +195,7 @@ With a disability `r dis[1]`%, Without a disability `r dis[2]`%
 
 ## Service Connected Disability (SCD) Rating 
 
-Has SCD rating `r dratx[1]`%, Does not have SCD rating `r dratx[2]`%  
+Has SCD rating `r dratx[1]`%, Does NOT have SCD rating `r dratx[2]`%  
 
 **0%:** `r drat[1]`%  
 **10 - 20%:** `r drat[2]`%  
@@ -204,6 +204,56 @@ Has SCD rating `r dratx[1]`%, Does not have SCD rating `r dratx[2]`%
 **70 < %:** `r drat[5]`%  
 **Not Reported:** `r drat[6]`%  
 
+## Self-care Difficulty
+```{r disabilities, echo=FALSE}
+
+#self-care difficulty
+ddrs <- svymean(~factor(DDRS), viet16_design, na.rm = TRUE) * 100
+ddrs <- round(ddrs, digits = 1)
+
+#hearing difficulty
+dear<- svymean(~factor(DEAR), viet16_design, na.rm = TRUE) * 100
+dear <- round(dear, digits = 1)
+
+#vision difficulty
+deye <- svymean(~factor(DEYE), viet16_design, na.rm = TRUE) * 100
+deye <- round(deye, digits = 1)
+
+#independent living difficulty
+dout <- svymean(~factor(DOUT), viet16_design, na.rm = TRUE) * 100
+dout <- round(dout, digits = 1)
+
+#ambulatory difficulty
+dphy <- svymean(~factor(DPHY), viet16_design, na.rm = TRUE) * 100
+dphy <- round(dphy, digits = 1)
+
+#cognitive difficulty
+drem <- svymean(~factor(DREM), viet16_design, na.rm = TRUE) * 100
+drem <- round(drem, digits = 1)
+
+```
+
+Has difficulty dressing or bathing `r ddrs[1]`%, Does NOT have difficulty dressing or bathing `r ddrs[2]`%
+
+## Hearing Difficulty
+
+Is deaf or has serious difficulty hearing `r dear[1]`%, Is NOT deaf or does NOT have serious difficulty `r dear[2]`%
+
+## Vision Difficulty
+
+Is blind or has serious difficulty seeing (even when wearing glasses) `r deye[1]`%, Is NOT blind or does NOT have difficulty seeing  `r deye[2]`%
+
+## Independent Living Difficulty
+
+Has difficulty doing errands alone (e.g. visiting doctor's office, shopping, etc.) `r dout[1]`%, Does NOT have difficulty doing errands `r dout[2]`%
+
+## Ambulatory Difficulty
+
+Has serious difficulty walking or climbing stairs `r dphy[1]`%, Does NOT have difficulty walking or climbing stairs `r dphy[2]`%
+
+## Cognitive Difficulty
+
+Has difficulty concentrating, remembering or making decisions `r drem[1]`%, Does NOT have difficulty concentrating, remembering or making decisions `r drem[2]`%
 
 ## Health Insurance Coverage
 
