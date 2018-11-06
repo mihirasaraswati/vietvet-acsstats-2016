@@ -10,10 +10,9 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 
 library(survey)
-
 
 #Data - Vietnam Era  Veterans Survey Design Object
 viet11_design <- readRDS("Data_per11_viet_design.Rds")
@@ -29,7 +28,6 @@ viet.vets.diff <- round(viet.vets.diff *100, digits = 1)
 
 #2016 viet vets by SEX
 sex <- svytotal(~factor(SEX), viet16_design)
-
 
 ```
 
@@ -51,42 +49,9 @@ This page lists several statistics on Vietnam Veterans from the [1- year 2016 Am
 ![](viet_vet_statebin.svg)
 
 
-## Race (Non-Hispanic)
-
-```{r race, echo=FALSE}
-#create new race variable RaceNH to serve as a rolled-up version of RAC1P
-viet16_design <- update(viet16_design, RaceNH = character(nrow(viet16_design)))
-#roll-up RaceNH levels
-viet16_design <- update(viet16_design,
-                        RaceNH = ifelse(RAC1P %in% c(3:5), "AIAN", 
-                                        ifelse(RAC1P %in% c(6:7), "Asian/NHOPI",
-                                               ifelse(RAC1P == 2, "Black", 
-                                                      ifelse(RAC1P == 1, "White", "Other")))
-                        )
-                        
-)
-
-racenh <- svymean(~factor(RaceNH), subset(viet16_design, HISP == 1)) * 100
-racenh <- round(racenh, digits = 1)
-
-```
-
-
-American Indian/Alaska Native `r racenh[1]`%, Asian/NHOPI `r racenh[2]`%, Black `r racenh[3]`%, Other `r racenh[4]`%, White `r racenh[5]`%
-
-## Marital Status 
-
-```{r mar, echo=FALSE}
-mar<- svymean(~factor(MAR), viet16_design, na.rm = TRUE) * 100
-mar <- round(mar, digits = 1)
-
-```
-
-Divorced `r mar[3]`%, Married `r mar[1]`%, Never Married `r mar[5]`%, Separated `r mar[4]`%, Widowed `r mar[2]`% 
-
 ## Age Group
 
-```{r age_struc, echo = FALSE}
+```{r age_struc}
 #Create categorical version of AGEP
 age.range <- seq(55, 105, 10)
 viet16_design <- update(viet16_design, AGEP.Cat = cut(AGEP, age.range, right = FALSE))
@@ -109,7 +74,7 @@ agecat.f <- svytotal(~factor(AGEP.Cat), subset(viet16_design, SEX == 2))
 
 ## Median Age
 
-```{r age_median, echo = FALSE}
+```{r age_median}
 #Median Age of Vietnam Veterans
 age.median <- svyquantile(~AGEP, viet16_design, quantiles = c(0.5))
 age.median.m <- svyquantile(~AGEP, subset(viet16_design, SEX == 1), quantiles = c(0.5))
@@ -119,9 +84,88 @@ age.median.f <- svyquantile(~AGEP, subset(viet16_design, SEX == 2), quantiles = 
 
 **Total:** `r age.median` years  (Male `r age.median.m` / Female `r age.median.f`)
 
+## Race (Non-Hispanic)
+
+```{r race}
+#create new race variable RaceNH to serve as a rolled-up version of RAC1P
+viet16_design <- update(viet16_design, RaceNH = character(nrow(viet16_design)))
+#roll-up RaceNH levels
+viet16_design <- update(viet16_design,
+                        RaceNH = ifelse(RAC1P %in% c(3:5), "AIAN", 
+                                        ifelse(RAC1P %in% c(6:7), "Asian/NHOPI",
+                                               ifelse(RAC1P == 2, "Black", 
+                                                      ifelse(RAC1P == 1, "White", "Other")))
+                        )
+                        
+)
+
+racenh <- svymean(~factor(RaceNH), subset(viet16_design, HISP == 1)) * 100
+racenh <- round(racenh, digits = 1)
+
+```
+
+American Indian/Alaska Native `r racenh[1]`%  
+Asian/NHOPI `r racenh[2]`%  
+Black `r racenh[3]`%  
+Other `r racenh[4]`%  
+White `r racenh[5]`%  
+
+## Marital Status 
+
+```{r mar}
+mar<- svymean(~factor(MAR), viet16_design, na.rm = TRUE) * 100
+mar <- round(mar, digits = 1)
+
+```
+
+Divorced `r mar[3]`%  
+Married `r mar[1]`%  
+Never Married `r mar[5]`%  
+Separated `r mar[4]`%  
+Widowed `r mar[2]`%   
+
+## Grandparents Living with Grandchildren
+
+```{r gcl}
+
+gcl <- svymean(~factor(GCL), viet16_design, na.rm = TRUE) * 100
+gcl <- round(gcl, digits = 1)
+
+```
+
+Grandparents live with grandchildren `r gcl[1]`%  
+Grandparents DO NOT live with grandchildren `r gcl[2]`%  
+
+## Grandparents Responsible for Grandchildren
+
+```{r gcr}
+gcr <- svymean(~factor(GCR), viet16_design, na.rm = TRUE) * 100
+gcr <- round(gcr, digits = 1)
+```
+
+Grandparents responsible for grandchildren `r gcr[1]`%  
+Grandparents NOT responsible for grandchildren `r gcr[2]`%  
+
+## Length of Time Responsible for Grandchildren
+
+```{r gcm}
+
+gcm <- svymean(~factor(GCM), viet16_design, na.rm = TRUE) * 100
+gcm <-  round(gcm, digits = 1)
+
+```
+
+Less than 6 months `r gcm[1]`%    
+6 to 11 months `r gcm[2]`%  
+1 or 2 years `r gcm[3]`%  
+3 or 4 years `r gcm[4]`%  
+5 or more years `r gcm[5]`%  
+
+
+
 ## Educational Attainment
 
-```{r edu, echo = FALSE}
+```{r edu}
 #convert SCHL variable to factor and condense levels
 viet16_design$variables$SCHL <- factor(viet16_design$variables$SCHL)
 levels(viet16_design$variables$SCHL) <-  list(LHS = c(1:15), HS = c(16:17), SC = c(18:20), BAC = 21, ADV = c(22:24))
@@ -131,22 +175,29 @@ schl <- round(schl, digits = 1)
 
 ```
 
-Less than High School `r schl[1]`%, High School Graduate `r schl[2]`%, Some College `r schl[3]`%, Bachelor's Degree `r schl[4]`%, Advanced Degree `r schl[4]`%
+Less than High School `r schl[1]`%  
+High School Graduate `r schl[2]`%  
+Some College `r schl[3]`%  
+Bachelor's Degree `r schl[4]`%  
+Advanced Degree `r schl[4]`%  
 
 ## Employment Status
 
-```{r esr, echo = FALSE}
+```{r esr}
 
 esr <- svymean(~factor(ESR), viet16_design, na.rm = TRUE) * 100
 esr <- round(esr, digits = 1)
 
 ```
 
-Not in Labor Force `r esr[4]`%,  Unemployed `r esr[3]`%, At Work (Civilian Employed) `r esr[1]`%, With Job NOT at Work (Civilian Employed) `r esr[2]`%  
+Not in Labor Force `r esr[4]`%  
+Unemployed `r esr[3]`%  
+At Work (Civilian Employed) `r esr[1]`%  
+With Job NOT at Work (Civilian Employed) `r esr[2]`%  
 
 ## Class of Worker
 
-```{r cow, echo = FALSE}
+```{r cow}
 
 viet16_design$variables$COW <- factor(viet16_design$variables$COW)
 levels(viet16_design$variables$COW) <- list(Pvt = c(1,2,8), Govt = c(3:5), SelfEmp = c(6,7), Unemp = 9)
@@ -155,11 +206,13 @@ cow <- round(cow, digits = 1)
 
 ```
 
-Private sector `r cow[1]`%, Public sector `r cow[2]`%, Self-employed `r cow[3]`%  
+Private sector `r cow[1]`%  
+Public sector `r cow[2]`%  
+Self-employed `r cow[3]`%    
 
 ## Personal Income
 
-```{r pincp, echo = FALSE}
+```{r pincp}
 #vector of income ranges used to convert numeric income variable into categorical variable.
 income.range <- c(seq(0, 100000, 20000), Inf)
 
@@ -178,7 +231,7 @@ pincp <- round(pincp, digits = 1)
 **$100,000+ :** `r pincp[6]`%  
 
 ## Disability Status 
-```{r drat_dratx, echo = FALSE}
+```{r drat_dratx}
 #disability status
 dis <- svymean(~factor(DIS), viet16_design, na.rm = TRUE) * 100
 dis <- round(dis, digits = 1)
@@ -191,11 +244,15 @@ drat <- round(drat, digits = 1)
 
 ```
 
-With a disability `r dis[1]`%, Without a disability `r dis[2]`%  
+With a disability `r dis[1]`%  
+Without a disability `r dis[2]`%  
 
-## Service Connected Disability (SCD) Rating 
+## Service Connected Disability
 
-Has SCD rating `r dratx[1]`%, Does NOT have SCD rating `r dratx[2]`%  
+Has SCD rating `r dratx[1]`%  
+Does NOT have SCD rating `r dratx[2]`%  
+
+## Service Connected Disability Rating 
 
 **0%:** `r drat[1]`%  
 **10 - 20%:** `r drat[2]`%  
@@ -205,7 +262,7 @@ Has SCD rating `r dratx[1]`%, Does NOT have SCD rating `r dratx[2]`%
 **Not Reported:** `r drat[6]`%  
 
 ## Self-care Difficulty
-```{r disabilities, echo=FALSE}
+```{r disabilities}
 
 #self-care difficulty
 ddrs <- svymean(~factor(DDRS), viet16_design, na.rm = TRUE) * 100
@@ -233,52 +290,61 @@ drem <- round(drem, digits = 1)
 
 ```
 
-Has difficulty dressing or bathing `r ddrs[1]`%, Does NOT have difficulty dressing or bathing `r ddrs[2]`%
+Has difficulty dressing or bathing `r ddrs[1]`%  
+Does NOT have difficulty dressing or bathing `r ddrs[2]`%  
 
 ## Hearing Difficulty
 
-Is deaf or has serious difficulty hearing `r dear[1]`%, Is NOT deaf or does NOT have serious difficulty `r dear[2]`%
+Is deaf or has serious difficulty hearing `r dear[1]`%  
+Is NOT deaf or does NOT have serious difficulty `r dear[2]`%  
 
 ## Vision Difficulty
 
-Is blind or has serious difficulty seeing (even when wearing glasses) `r deye[1]`%, Is NOT blind or does NOT have difficulty seeing  `r deye[2]`%
+Is blind or has serious difficulty seeing (even when wearing glasses) `r deye[1]`%  
+Is NOT blind or does NOT have difficulty seeing  `r deye[2]`%  
 
 ## Independent Living Difficulty
 
-Has difficulty doing errands alone (e.g. visiting doctor's office, shopping, etc.) `r dout[1]`%, Does NOT have difficulty doing errands `r dout[2]`%
+Has difficulty doing errands alone (e.g. visiting doctor's office, shopping, etc.) `r dout[1]`%  
+Does NOT have difficulty doing errands `r dout[2]`%  
 
 ## Ambulatory Difficulty
 
-Has serious difficulty walking or climbing stairs `r dphy[1]`%, Does NOT have difficulty walking or climbing stairs `r dphy[2]`%
+Has serious difficulty walking or climbing stairs `r dphy[1]`%  
+Does NOT have difficulty walking or climbing stairs `r dphy[2]`%  
 
 ## Cognitive Difficulty
 
-Has difficulty concentrating, remembering or making decisions `r drem[1]`%, Does NOT have difficulty concentrating, remembering or making decisions `r drem[2]`%
+Has difficulty concentrating, remembering or making decisions `r drem[1]`%  
+Does NOT have difficulty concentrating, remembering or making decisions `r drem[2]`%  
 
 ## Health Insurance Coverage
 
-```{r pubcov, echo=FALSE}
+```{r pubcov}
 pubcov <- svymean(~factor(PUBCOV), viet16_design, na.rm = TRUE) * 100
 pubcov <- round(pubcov, digits = 1)
 
 ```
 **Public Health Insurance Coverage (Medicare, Medicaid and VA)**  
-Covered `r pubcov[1]`%, Not Covered `r pubcov[2]`%  
+Covered `r pubcov[1]`%  
+Not Covered `r pubcov[2]`%  
 
-```{r privcov, echo=FALSE}
+```{r privcov}
 privcov <- svymean(~factor(PRIVCOV), viet16_design, na.rm = TRUE) * 100
 privcov <- round(privcov, digits = 1)
 
 ```
 **Private Health Insurance Coverage (Employer, Direct-Purchase and TRICARE/CHAMPUS)**  
-Covered `r privcov[1]`%, Not Covered `r privcov[2]`%  
+Covered `r privcov[1]`%  
+Not Covered `r privcov[2]`%  
 
-```{r hins6-vahealth, echo = FALSE}
+```{r hins6-vahealth}
 hins6 <- svymean(~factor(HINS6), viet16_design, na.rm = TRUE) * 100
 hins6 <- round(hins6, digits = 1)
 
 ```
 **VA Healthcare (Used or Enrolled)**  
-Covered `r hins6[1]`%, Not Covered `r hins6[2]`%
+Covered `r hins6[1]`%  
+Not Covered `r hins6[2]`%
 
 
