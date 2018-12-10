@@ -113,6 +113,7 @@ White `r racenh[5]`%
 ## Marital Status 
 
 ```{r mar}
+
 mar<- svymean(~factor(MAR), viet16_design, na.rm = TRUE) * 100
 mar <- round(mar, digits = 1)
 
@@ -123,6 +124,49 @@ Married `r mar[1]`%
 Never Married `r mar[5]`%  
 Separated `r mar[4]`%  
 Widowed `r mar[2]`%   
+
+## Number of Times Married
+```{r marht}
+
+marht<- svymean(~factor(MARHT), viet16_design, na.rm = TRUE) * 100
+marht <- round(marht, digits = 1)
+
+```
+
+One time `r marht[1]`%  
+Two times `r marht[2]`%  
+Three or more times `r marht[3]`%  
+
+## Married (in the past 12 months)
+```{r marhm}
+marhm<- svymean(~factor(MARHM), viet16_design, na.rm = TRUE) * 100
+marhm <- round(marhm, digits = 1)
+
+```
+Yes `r marhm[1]`%     
+No `r marhm[2]`%    
+
+## Divorced (in the past 12 months)
+
+```{r marhd}
+marhd<- svymean(~factor(MARHD), viet16_design, na.rm = TRUE) * 100
+marhd <- round(marhd, digits = 1)
+
+```
+
+Yes `r marhd[1]`%     
+No `r marhd[2]`%    
+
+## Widowed (in the past 12 months)
+
+```{r marhw}
+marhw<- svymean(~factor(MARHW), viet16_design, na.rm = TRUE) * 100
+marhw <- round(marhw, digits = 1)
+
+```
+
+Yes `r marhw[1]`%     
+No `r marhw[2]`%    
 
 ## Grandparents Living with Grandchildren
 
