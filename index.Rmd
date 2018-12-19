@@ -110,6 +110,35 @@ Black `r racenh[3]`%
 Other `r racenh[4]`%  
 White `r racenh[5]`%  
 
+## Ability to Speak English
+
+```{r engspk}
+
+engspk <- svymean(~factor(ENG), viet16_design, na.rm = TRUE) * 100
+engspk <- round(engspk, digits =1)
+
+```
+
+Very well `r engspk[1]`%  
+Well `r engspk[2]`%    
+Not well `r engspk[3]`%    
+Not at all `r engspk[4]`%  
+
+## Citizenship Status
+
+```{r cit}
+
+cit <- svymean(~factor(CIT), viet16_design, na.rm = TRUE) * 100
+cit <- round(cit, digits = 1)
+
+```
+
+Born in the U.S. `r cit[1]`%   
+Born in Puerto Rico, Guam, U.S. Virgin Islands, or Northern Marianas `r cit[2]`%    
+Born abroad of American parent(s) `r cit[3]`%   
+U.S. citizen by naturalization `r cit[4]`%   
+Not a citizen of the U.S. `r cit[5]`%   
+
 ## Marital Status 
 
 ```{r mar}
@@ -362,33 +391,91 @@ Does NOT have difficulty walking or climbing stairs `r dphy[2]`%
 Has difficulty concentrating, remembering or making decisions `r drem[1]`%  
 Does NOT have difficulty concentrating, remembering or making decisions `r drem[2]`%  
 
-## Health Insurance Coverage
+## Health Insurance Coverage (Overall)
 
-```{r pubcov}
+```{r hicov}
+hicov <- svymean(~factor(HICOV), viet16_design, na.rm = TRUE) * 100
+hicov <- round(hicov, digits = 1)
+
+```
+
+Covered `r hicov[1]`%   
+Not Covered `r hicov[2]`%   
+
+## Health Insurance Coverage (Public vs. Private)
+
+```{r pubprivcov}
+
+#public coverage
 pubcov <- svymean(~factor(PUBCOV), viet16_design, na.rm = TRUE) * 100
 pubcov <- round(pubcov, digits = 1)
 
-```
-**Public Health Insurance Coverage (Medicare, Medicaid and VA)**  
-Covered `r pubcov[1]`%  
-Not Covered `r pubcov[2]`%  
-
-```{r privcov}
+#private coverage
 privcov <- svymean(~factor(PRIVCOV), viet16_design, na.rm = TRUE) * 100
 privcov <- round(privcov, digits = 1)
 
+
 ```
+
+**Public Health Insurance Coverage (Medicare, Medicaid and VA)**    
+Covered `r pubcov[1]`%    
+NOT Covered `r pubcov[2]`%    
+
 **Private Health Insurance Coverage (Employer, Direct-Purchase and TRICARE/CHAMPUS)**  
 Covered `r privcov[1]`%  
-Not Covered `r privcov[2]`%  
+NOT Covered `r privcov[2]`%  
 
-```{r hins6-vahealth}
+## Health Insurance Coverage (Specific Type)
+
+```{r hins}
+
+hins1 <- svymean(~factor(HINS1), viet16_design, na.rm = TRUE) * 100
+hins1 <- round(hins1, digits = 1)
+
+hins2 <- svymean(~factor(HINS2), viet16_design, na.rm = TRUE) * 100
+hins2 <- round(hins2, digits = 1)
+
+hins3 <- svymean(~factor(HINS3), viet16_design, na.rm = TRUE) * 100
+hins3 <- round(hins3, digits = 1)
+
+hins4 <- svymean(~factor(HINS4), viet16_design, na.rm = TRUE) * 100
+hins4 <- round(hins4, digits = 1)
+
+hins5 <- svymean(~factor(HINS5), viet16_design, na.rm = TRUE) * 100
+hins5 <- round(hins5, digits = 1)
+
 hins6 <- svymean(~factor(HINS6), viet16_design, na.rm = TRUE) * 100
 hins6 <- round(hins6, digits = 1)
 
+hins7 <- svymean(~factor(HINS7), viet16_design, na.rm = TRUE) * 100
+hins7 <- round(hins7, digits = 1)
+
 ```
+
+**Employer or Union Based**   
+Covered `r hins1[1]`%    
+NOT Covered `r hins1[2]`%  
+
+**Direct purchase**   
+Covered `r hins2[1]`%   
+NOT Covered `r hins2[2]`%   
+
+**Medicare (65 and older or certain disabilities)**  
+Covered `r hins3[1]`%   
+NOT Covered `r hins1[2]`%   
+
+**Medicaid (Low income or disability)**    
+Covered `r hins4[1]`%   
+NOT Covered `r hins4[2]`%   
+
+**TRICARE**  
+Covered `r hins5[1]`%   
+NOT Covered `r hins6[2]`%   
+
 **VA Healthcare (Used or Enrolled)**  
 Covered `r hins6[1]`%  
-Not Covered `r hins6[2]`%
+NOT Covered `r hins6[2]`%  
 
-
+**Indian Health Services**  
+Covered `r hins7[1]`%  
+NOT Covered `r hins7[2]`%  
