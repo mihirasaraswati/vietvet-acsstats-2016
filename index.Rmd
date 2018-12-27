@@ -303,6 +303,56 @@ pincp <- round(pincp, digits = 1)
 **$80,000 - $99,999:** `r pincp[5]`%  
 **$100,000+ :** `r pincp[6]`%  
 
+
+## Personal Earnings
+
+```{r pernp, echo = FALSE}
+
+viet16_design <- update(viet16_design, PERNP.Cat = cut(PERNP, income.range, right = FALSE))
+pernp <- svymean(~PERNP.Cat, viet16_design, na.rm = TRUE) * 100
+pernp <- round(pernp, digits = 1)
+
+```
+
+**$0 - $19,999:** `r pernp[1]`%  
+**$20,000 - $39,999:** `r pernp[2]`%  
+**$40,000 - $59,999:** `r pernp[3]`%  
+**$60,000 - $79,999:** `r pernp[4]`%  
+**$80,000 - $99,999:** `r pernp[5]`%  
+**$100,000+ :** `r pernp[6]`%  
+
+## Social Security Income
+
+```{r ssp, echo = FALSE}
+viet16_design <- update(viet16_design, SSP.Cat = cut(SSP, income.range, right = FALSE))
+ssp <- svymean(~SSP.Cat, viet16_design, na.rm = TRUE) * 100
+ssp <- round(ssp, digits = 1)
+
+```
+
+**$0 - $19,999:** `r ssp[1]`%  
+**$20,000 - $39,999:** `r ssp[2]`%  
+**$40,000 - $59,999:** `r ssp[3]`%  
+**$60,000 - $79,999:** `r ssp[4]`%  
+**$80,000 - $99,999:** `r ssp[5]`%  
+**$100,000+ :** `r ssp[6]`%  
+
+## Retirement Income
+
+```{r retp, echo = FALSE}
+viet16_design <- update(viet16_design, RETP.Cat = cut(RETP, income.range, right = FALSE))
+retp <- svymean(~RETP.Cat, viet16_design, na.rm = TRUE) * 100
+retp <- round(retp, digits = 1)
+
+```
+
+**$0 - $19,999:** `r retp[1]`%  
+**$20,000 - $39,999:** `r retp[2]`%  
+**$40,000 - $59,999:** `r retp[3]`%  
+**$60,000 - $79,999:** `r retp[4]`%  
+**$80,000 - $99,999:** `r retp[5]`%  
+**$100,000+ :** `r retp[6]`% 
+
 ## Disability Status 
 ```{r drat_dratx}
 #disability status
